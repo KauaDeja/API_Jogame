@@ -21,38 +21,114 @@ namespace API_Jogame.Controllers
         }
 
         [HttpGet]
-        public List<Jogo> Get()
+        public IActionResult Get()
         {
-            return _JogoRepository.LerTodos();
+            try
+            {
+                // Lista os produtos no repositório
+                var jogos =  _JogoRepository.LerTodos();
+
+                // verifica  se existe jogos, caso n exista retorna sem conteudo
+                if (jogos.Count == 0)
+                    return NoContent();
+
+                // Caso exista retorna Ok e os jogos
+                return Ok(jogos);
+
+            }
+            catch (Exception ex)
+            {
+                // Caso ocorra algum erro retorna BadRequest e a mensagem de erro
+                return BadRequest(ex.Message);
+            }
         }
 
-        // GET api/<AlunoController>/5
+      
         [HttpGet("{id}")]
-        public Jogo Get(Guid id)
+        public IActionResult Get(Guid id)
         {
-            return _JogoRepository.BuscarPorId(id);
+            try
+            {
+                // bUSCO o jogo no repositório
+                Jogo jogo = _JogoRepository.BuscarPorId(id);
+
+                // verifica se o  jogo existe
+                // Caso n esxita retorna notfound
+                if (jogo == null)
+                    return NotFound();
+
+                // caso o jogo exista retorna ok e seus dados
+                return Ok(jogo);
+            }
+            catch (Exception ex)
+            {
+                // Caso ocorra algum erro retorna BadRequest e a mensagem de erro
+                return BadRequest(ex.Message);
+            }
         }
 
-        // POST api/<AlunoController>
+    
         [HttpPost]
-        public void Post(Jogo jogo)
+        public IActionResult Post(Jogo jogo)
         {
-             _JogoRepository.Cadastrar(jogo);
+            try
+            {   // Adiciona um jogo
+                _JogoRepository.Cadastrar(jogo);
+
+                // retorna ok com os dados do jogo
+                return Ok(jogo);
+            }
+            catch (Exception ex)
+            {
+
+                 return BadRequest(ex.Message);
+
+            }
         }
 
-        // PUT api/<AlunoController>/5
         [HttpPut("{id}")]
-        public void Put(Guid id, Jogo jogo)
+        public IActionResult Put(Guid id, Jogo jogo)
         {
-            jogo.Id = id;
-            _JogoRepository.Alterar(jogo);
+            try
+            {
+                var jogoTemp = _JogoRepository.BuscarPorId(id);
+
+
+                // verifica se o  jogo existe
+                // Caso n esxita retorna notfound
+                if (jogoTemp == null)
+                    return NotFound();
+
+                jogo.Id = id;
+                _JogoRepository.Alterar(jogo);
+
+                // retorna ok com os dados do jogo
+                return Ok(jogo);
+
+            }
+            catch (Exception ex)
+            {
+                // Caso ocorra algum erro retorna BadRequest e a mensagem de erro
+                return BadRequest(ex.Message);
+            }
         }
 
-        // DELETE api/<AlunoController>/5
+   
         [HttpDelete("{id}")]
-        public void Delete(Guid id)
+        public IActionResult Delete(Guid id)
         {
-            _JogoRepository.Excluir(id);
+            try
+            {   // Exclui o jogo no repository
+                _JogoRepository.Excluir(id);
+
+                // caso o jogo exista retorna ok e seus dados
+                return Ok(id);
+            }
+            catch (Exception ex)
+            {
+                // Caso ocorra algum erro retorna BadRequest e a mensagem de erro
+                return BadRequest(ex.Message);
+            }
         }
     }
 }
