@@ -9,6 +9,8 @@ namespace API_Jogame.Interfaces
     interface IJogoRepository
     {
         // Aqui fazemos o CRUD
+        // Lista todos os jogos cadastrados
+        List<Jogo> LerTodos();
         // Neste metodo buscamos por id
         Jogo BuscarPorId(Guid id);
         // Cadastramos o jogo
@@ -17,6 +19,7 @@ namespace API_Jogame.Interfaces
         void Alterar(Jogo jogo);
         // Excluimos o jogo pelo seu Id
         void Excluir(Guid id);
+      
         
     }
 }
