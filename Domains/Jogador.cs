@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
 
 namespace API_Jogame.Domains
 {
@@ -15,5 +14,8 @@ namespace API_Jogame.Domains
         public string   Email           { get; set; }
         public string   Senha           { get; set; }
         public DateTime DataNascimento  { get; set; }
+
+        // relacioanmento coma  tabela jogosjogadores 1,n
+        public List<JogoJogadores> JogosJogadores { get; set; }
     }
 }

@@ -13,8 +13,10 @@ namespace API_Jogame.Interfaces
         List<Jogo> LerTodos();
         // Neste metodo buscamos por id
         Jogo BuscarPorId(Guid id);
+        // Neste metodo buscamos pelo nome
+        List<Jogo> BuscarPorNome(string nome);
         // Cadastramos o jogo
-        void Cadastrar(Jogo jogo);
+        Jogo Cadastrar(List<JogoJogadores> jogoJogadores);
         // Alteramos o jogo
         void Alterar(Jogo jogo);
         // Excluimos o jogo pelo seu Id

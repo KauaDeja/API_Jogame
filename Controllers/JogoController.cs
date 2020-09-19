@@ -33,7 +33,10 @@ namespace API_Jogame.Controllers
                     return NoContent();
 
                 // Caso exista retorna Ok e os jogos
-                return Ok(jogos);
+                return Ok(new { 
+                    totalCount = jogos.Count,
+                    data = jogos
+                });
 
             }
             catch (Exception ex)
@@ -60,29 +63,40 @@ namespace API_Jogame.Controllers
                 // caso o jogo exista retorna ok e seus dados
                 return Ok(jogo);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Caso ocorra algum erro retorna BadRequest e a mensagem de erro
-                return BadRequest(ex.Message);
+                return BadRequest(new { 
+                    statusCode = 400,
+                    error = "Ocorreu um erro no endpoint Get/ jogos, envie um e-mail para email@gmail.com informando"
+                });
             }
         }
 
-    
-        [HttpPost]
-        public IActionResult Post(Jogo jogo)
+
+        [HttpGet]
+        public IActionResult Post(List<JogoJogadores> JogosJogadores)
         {
             try
-            {   // Adiciona um jogo
-                _JogoRepository.Cadastrar(jogo);
+            {
+                //lista de jogadores
+                var jogadores = _JogoRepository.LerTodos();
 
-                // retorna ok com os dados do jogo
-                return Ok(jogo);
+                //verifica se existe no conxtexto atual
+                //caso nao exista ele retorna NoContext
+                if (jogadores.Count == 0)
+                    return NoContent();
+
+                //caso exista retorno Ok e o total de jogadores cadastrados
+                return Ok(new
+                {
+                    totalCount = jogadores.Count,
+                    data = jogadores
+                });
             }
             catch (Exception ex)
             {
-
-                 return BadRequest(ex.Message);
-
+                return BadRequest(ex.Message);
             }
         }
 
@@ -99,7 +113,7 @@ namespace API_Jogame.Controllers
                 if (jogoTemp == null)
                     return NotFound();
 
-                jogo.Id = id;
+
                 _JogoRepository.Alterar(jogo);
 
                 // retorna ok com os dados do jogo

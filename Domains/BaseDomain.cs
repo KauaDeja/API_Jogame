@@ -10,11 +10,16 @@ namespace API_Jogame.Domains
     public abstract class BaseDomain
     {
         [Key]
-        public Guid Id { get;set; } // Encapsulamento da propriedade que gera o id pk
+        public Guid Id { get; private set; } // Encapsulamento da propriedade que gera o id pk
 
         public BaseDomain()
         {
             Id = Guid.NewGuid();
+        }
+
+        public void setId(Guid id)
+        {
+            Id = id;
         }
     }
 }

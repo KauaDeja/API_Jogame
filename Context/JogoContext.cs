@@ -13,7 +13,7 @@ namespace API_Jogame.Context
         // Aqui vai ser onde vamos ccriar a estrutrura das nossas tabelas
         public DbSet<Jogo>          Jogos { get; set; }
         public DbSet<Jogador>       Jogadores { get; set; }
-        public DbSet<JogoJogador>   JogosJogadores { get; set; }
+        public DbSet<JogoJogadores>   JogosJogadores { get; set; }
 
         // Aqui nos fazemos uma sobreposição das config default existentes
         // Usamos uma condicional para configurar e criar o nosso database

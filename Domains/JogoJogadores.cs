@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace API_Jogame.Domains
 {
-    public class JogoJogador : BaseDomain
+    public class JogoJogadores : BaseDomain
     {
         // Fazemos o relacionamento da FK(IdJogo)
         public Guid IdJogo { get; set; }
@@ -23,6 +24,9 @@ namespace API_Jogame.Domains
         [ForeignKey("IdJogador")]
 
         public Jogador Jogador { get; set; }
+
+        [Required]
+        public int Quantidade { get; set; }
 
 
     }

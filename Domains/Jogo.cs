@@ -10,5 +10,12 @@ namespace API_Jogame.Domains
         public string   Nome            { get; set; }
         public string   Descricao       { get; set; }
         public DateTime DataLancamento  { get; set; }
+
+        public List<JogoJogadores> JogosJogadores { get; set; }
+
+        public Jogo()
+        {
+            JogosJogadores = new List<JogoJogadores>();
+        }
     }
 }

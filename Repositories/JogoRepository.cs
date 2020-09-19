@@ -1,6 +1,7 @@
 ﻿using API_Jogame.Context;
 using API_Jogame.Domains;
 using API_Jogame.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,24 +30,23 @@ namespace API_Jogame.Repositories
         {
             try
             {
-                //Busca jogo pelo seu id
+                //busca jogo pelo id
                 Jogo jogoTemp = BuscarPorId(jogo.Id);
+                //verifica se o jogo existe no sistema, caso nao exista gera um exception
+                if (jogoTemp == null)
+                    throw new Exception("Jogo não encontrado no sistema. Verifique se foi digitado da maneira correta e tente novamente.");
 
-                // Verifica se o jogo existe 
-                // Caso n exista gera uma exception
-                if(jogoTemp == null)
-                
-                    throw new Exception("Jogo não encontrado");
+                //caso exista altera suas propriedades
+                jogoTemp.Nome = jogo.Nome;
+                jogoTemp.Descricao = jogo.Descricao;
 
-                    // Caso exista altera
-                    jogoTemp.Nome = jogo.Nome;
-                    jogoTemp.Descricao = jogo.Descricao;
 
-                    // Altera os produtos no context
-                    cont.Jogos.Update(jogoTemp);
 
-                    cont.SaveChanges();
-                
+                //altera jogo no seu contexto
+                cont.Jogos.Update(jogoTemp);
+                //salva suas alteraçoes
+                cont.SaveChanges();
+
             }
             catch (Exception ex)
             {
@@ -58,20 +58,38 @@ namespace API_Jogame.Repositories
         /// Cadastra os jogos
         /// </summary>
         /// <param name="jogo">Objeto jogo</param>
-        public void Cadastrar(Jogo jogo)
+        public Jogo Cadastrar(List<JogoJogadores> jogoJogadores)
         {
             // try - tente
             // catch - excessão
             // Try catch é um tipo de tratativa para o nosso erro
             try
             {
-                //Adiciona objeto do tipo jogo ao dbset do contexto
-                cont.Jogos.Add(jogo);
+                Jogo jogo = new Jogo
+                {
+                    Nome = "God of War",
+                    Descricao = "God of War é uma série de jogos eletrônicos de ação-aventura vagamente baseado nas mitologias grega e nórdica sendo criado originalmente por David Jaffe da Santa Monica Studio. Iniciada em 2005, a série tornou-se carro-chefe para a marca PlayStation, que consiste em oito jogos em várias plataformas",
+                };
 
-                // Salva as alterações no contexto
+                foreach (var item in jogoJogadores)
+                {
+                    //adiciona um alunoescola a lista
+                    jogo.JogosJogadores.Add(new JogoJogadores
+                    {
+
+                        IdJogo = jogo.Id,
+                        Jogo = item.Jogo,
+                        IdJogador = item.IdJogador,
+                        Jogador = item.Jogador
+
+                    });
+                }
+                cont.Jogos.Add(jogo);
                 cont.SaveChanges();
+
+                return jogo;
             }
-            catch (Exception ex )
+            catch (Exception ex)
             {
 
                 throw new Exception(ex.Message);
@@ -85,18 +103,15 @@ namespace API_Jogame.Repositories
         {
             try
             {
-                // Buscar jogo pelo ID
+                //busca jogo pelo id
                 Jogo jogoTemp = BuscarPorId(id);
+                //verifica se o jogo existe no sistema, caso nao exista gera um exception
+                if (jogoTemp == null)
+                    throw new Exception("Jogo não encontrado no sistema. Verifique se foi digitado da maneira correta e tente novamente.");
 
-                // verifica se o produto existe
-                // Caso não gera um ex
-                if(jogoTemp == null)
-                
-                    throw new Exception("Jogo não encontrado");         
-
-                // Remove os jogos no DbSet
+                //remove jogo no contexto atual
                 cont.Jogos.Remove(jogoTemp);
-                // salva as alterações do contexto
+                //salva as alteraçoes
                 cont.SaveChanges();
 
             }
@@ -117,16 +132,19 @@ namespace API_Jogame.Repositories
         /// <returns>Jogo</returns>
         public Jogo BuscarPorId(Guid id)
         {
-            try
             {
-                //return cont.Jogos.FirstOrDefault(c => c.Id == id);
-                return cont.Jogos.Find(id);
-               
-            }
-            catch (Exception ex)
-            {
-                // caso ocorra algum erro vai retornar uma excessao
-                throw new Exception(ex.Message);
+                try
+                {
+                    return cont.Jogos
+                        .Include(c => c.JogosJogadores)
+                        .ThenInclude(c => c.Jogador)
+                        .FirstOrDefault(p => p.Id == id);
+
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+                }
             }
         }
         /// <summary>
@@ -143,6 +161,24 @@ namespace API_Jogame.Repositories
             catch (Exception ex)
             {
                 // caso ocorra algum erro vai retornar uma excessao
+                throw new Exception(ex.Message);
+            }
+        }
+        /// <summary>
+        /// Aqui buscamos o jogo pelo seu nome
+        /// </summary>
+        /// <param name="nome"> nome do jogo</param>
+        /// <returns>Jogo</returns>
+        public List<Jogo> BuscarPorNome(string nome)
+        {
+            try
+            {
+                return cont.Jogos.Where(p => p.Nome.Contains(nome)).ToList();
+
+            }
+            catch (Exception ex)
+            {
+
                 throw new Exception(ex.Message);
             }
         }
