@@ -22,38 +22,7 @@ namespace API_Jogame.Repositories
 
         // Region é um comando de organização dos codigos
         #region Gravação
-        /// <summary>
-        /// Altera um jogo
-        /// </summary>
-        /// <param name="jogo">jogo a ser editado</param>
-        public void Alterar(Jogo jogo)
-        {
-            try
-            {
-                //busca jogo pelo id
-                Jogo jogoTemp = BuscarPorId(jogo.Id);
-                //verifica se o jogo existe no sistema, caso nao exista gera um exception
-                if (jogoTemp == null)
-                    throw new Exception("Jogo não encontrado no sistema. Verifique se foi digitado da maneira correta e tente novamente.");
 
-                //caso exista altera suas propriedades
-                jogoTemp.Nome = jogo.Nome;
-                jogoTemp.Descricao = jogo.Descricao;
-
-
-
-                //altera jogo no seu contexto
-                cont.Jogos.Update(jogoTemp);
-                //salva suas alteraçoes
-                cont.SaveChanges();
-
-            }
-            catch (Exception ex)
-            {
-
-                throw new Exception(ex.Message);
-            }
-        }
         /// <summary>
         /// Cadastra os jogos
         /// </summary>
@@ -95,6 +64,40 @@ namespace API_Jogame.Repositories
                 throw new Exception(ex.Message);
             }
         }
+
+        /// <summary>
+        /// Altera um jogo
+        /// </summary>
+        /// <param name="jogo">jogo a ser editado</param>
+        public void Alterar(Jogo jogo)
+        {
+            try
+            {
+                //busca jogo pelo id
+                Jogo jogoTemp = BuscarPorId(jogo.Id);
+                //verifica se o jogo existe no sistema, caso nao exista gera um exception
+                if (jogoTemp == null)
+                    throw new Exception("Jogo não encontrado no sistema. Verifique se foi digitado da maneira correta e tente novamente.");
+
+                //caso exista altera suas propriedades
+                jogoTemp.Nome = jogo.Nome;
+                jogoTemp.Descricao = jogo.Descricao;
+
+
+
+                //altera jogo no seu contexto
+                cont.Jogos.Update(jogoTemp);
+                //salva suas alteraçoes
+                cont.SaveChanges();
+
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception(ex.Message);
+            }
+        }
+       
         /// <summary>
         /// Exclui o jogo cadastrado
         /// </summary>

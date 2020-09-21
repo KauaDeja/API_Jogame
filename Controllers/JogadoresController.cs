@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using API_Jogame.Domains;
 using API_Jogame.Interfaces;
 using API_Jogame.Repositories;
+using API_Jogame.Utills;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,10 +21,6 @@ namespace API_Jogame.Controllers
         {
             _JogadorRepository = new JogadorRepository();
         }
-        /// <summary>
-        /// Mostra todos os jogadores cadastrado 
-        /// </summary>
-        /// <returns>o jogador cadastrado</returns>
 
         [HttpGet]
         public IActionResult Get()
@@ -50,11 +47,7 @@ namespace API_Jogame.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        /// <summary>
-        /// bUSCA o jogador por id
-        /// </summary>
-        /// <param name="id">id do jogador</param>
-        /// <returns>jogador</returns>
+
         [HttpGet("{id}")]
         public IActionResult Get(Guid id)
         {
@@ -78,16 +71,19 @@ namespace API_Jogame.Controllers
             }
         }
 
-        /// <summary>
-        /// Cadastrar o jogador
-        /// </summary>
-        /// <param name="jogador">objeto jogador</param>
-        /// <returns> jogador cadastrado</returns>
         [HttpPost]
-        public IActionResult Post(Jogador jogador)
+        public IActionResult Post([FromForm] Jogador jogador)
         {
             try
             {
+
+                if (jogador.Imagem != null)
+                {
+                    var urlImagem = Upload.Local(jogador.Imagem);
+
+                    jogador.UrlImagem = urlImagem;
+                }
+
                 //adiciona um novo jogador
                 _JogadorRepository.Cadastrar(jogador);
 
@@ -100,12 +96,6 @@ namespace API_Jogame.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        /// <summary>
-        /// edita um jogador
-        /// </summary>
-        /// <param name="id">id do jogador</param>
-        /// <param name="jogador"> o proprio objeto de jogador</param>
-        /// <returns></returns>
 
         [HttpPut("{id}")]
         public IActionResult Put(Guid id, Jogador jogador)
@@ -123,11 +113,6 @@ namespace API_Jogame.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        /// <summary>
-        /// Exclui o jogador
-        /// </summary>
-        /// <param name="id"> id do jogador</param>
-        /// <returns>jogador excluido</returns>
         [HttpDelete("{id}")]
         public IActionResult Delete(Guid id)
         {

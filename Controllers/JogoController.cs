@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using API_Jogame.Domains;
 using API_Jogame.Interfaces;
 using API_Jogame.Repositories;
+using API_Jogame.Utills;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -73,29 +74,27 @@ namespace API_Jogame.Controllers
             }
         }
 
-
-        [HttpGet]
-        public IActionResult Post(List<JogoJogadores> JogosJogadores)
+        //fromform - recebe os dados via form-data
+        [HttpPost]
+        public IActionResult Post([FromForm] List<JogoJogadores> jogoJogadores)
         {
             try
             {
-                //lista de jogadores
-                var jogadores = _JogoRepository.LerTodos();
+                Jogo jogo = _JogoRepository.Cadastrar(jogoJogadores);
 
-                //verifica se existe no conxtexto atual
-                //caso nao exista ele retorna NoContext
-                if (jogadores.Count == 0)
-                    return NoContent();
-
-                //caso exista retorno Ok e o total de jogadores cadastrados
-                return Ok(new
+                if (jogo.Imagem != null)
                 {
-                    totalCount = jogadores.Count,
-                    data = jogadores
-                });
+                    var urlImagem = Upload.Local(jogo.Imagem);
+
+                    jogo.UrlImagem = urlImagem;
+                }
+
+
+                return Ok(jogo);
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
+
                 return BadRequest(ex.Message);
             }
         }
